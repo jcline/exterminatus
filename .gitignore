@@ -1,2 +1,4 @@
 .*.sw*
 venv
+config
+config.bak
