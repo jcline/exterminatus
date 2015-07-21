@@ -1,0 +1,26 @@
+A simple tool for deleting comment threads on reddit as a moderator.
+
+This tool is mainly aimed at removing large troll threads or brigading/raids
+from other parts of reddit or other websites.
+
+--------
+Requirements:
+
+python 3
+pip install -r requirements.txt
+
+--------
+Usage:
+
+First you will need to follow the instructions for 'Script app's:
+https://github.com/reddit/reddit/wiki/OAuth2
+
+Then:
+
+./exterminatus.py thread_url [thread_url2] [...]
+
+On first invocation it will prompt you for your username, password, client id,
+and client secret. You will receive the latter two items as part of the OAuth2
+setup. It will save these credentials in a file called 'config' in the same
+directory the program is run from.
+
