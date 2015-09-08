@@ -2,26 +2,30 @@
 
 import argparse
 import datetime
+import http.client
 import json
 import logging
 import os
 import re
 import requests
+from requests.auth import HTTPBasicAuth
 import sys
 import time
 
 import dateutil.parser
 
 logging.basicConfig(level=logging.DEBUG)
+#http.client.HTTPConnection.debuglevel = 1
 
 class api(object):
     def __init__(self, creds):
         self.credentials = creds
+        self.user_agent = 'Exterminatus/0.1 by /u/lenish'
         self.set_headers()
 
     def set_headers(self):
         self.headers = {
-            'User-Agent': 'Exterminatus/0.1 by /u/lenish',
+            'User-Agent': self.user_agent,
             'Authorization': 'bearer %s' % self.credentials.token
         }
 
@@ -37,7 +41,8 @@ class api(object):
         }
         r = requests.post('https://www.reddit.com/api/v1/access_token',
             data=body,
-            auth=(self.credentials.client_id, self.credentials.client_secret)
+            auth=HTTPBasicAuth(self.credentials.client_id, self.credentials.client_secret),
+            headers={'User-Agent': self.user_agent}
         )
         self.credentials.init_token(r.json())
         self.set_headers()
@@ -96,7 +101,9 @@ class credentials(object):
         credentials.save_credentials(self, self.file_name)
 
     def is_expired(self):
-        return datetime.datetime.utcnow() > self.token_expiry
+        return self.token is None or \
+                self.token == '' or \
+                datetime.datetime.utcnow() > self.token_expiry
 
     @staticmethod
     def load_credentials(conf_file_name):
