@@ -165,7 +165,13 @@ def extract_comment_ids_replies(comment):
 def load_all_comments(client, threads):
     ids = []
     for thread in threads:
-        ids.extend(extract_comment_ids_top(client.load_comments(thread)))
+        if re.match('http.*/comments/[^/]+/[^/]+/[^/]+', thread):
+            # We're only removing a comment subthread, not the entire post
+            comments = client.load_comments(thread)
+            assert len(comments) == 2, json.dumps(comments)
+            ids.extend(extract_comment_ids_replies(comments[1]['data']['children']))
+        else:
+            ids.extend(extract_comment_ids_top(client.load_comments(thread)))
     return ids
 
 def exterminatus(client, ids):
