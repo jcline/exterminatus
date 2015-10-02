@@ -163,7 +163,7 @@ def extract_comment_ids_top(thread):
 def extract_comment_ids_replies(comment):
     ids = []
     for child in comment:
-        if not child['data']['banned_by']:
+        if 'banned_by' not in child['data'] or not child['data']['banned_by']:
             ids.append(child['data']['name'])
         if 'replies' in child['data'] and 'data' in child['data']['replies']:
             ids.extend(extract_comment_ids_replies(child['data']['replies']['data']['children']))
